@@ -16,9 +16,10 @@ WHERE b.id = bb.band_id AND a.id = bb.albums_id AND (a.issue < '2020-01-01' OR a
 SELECT DISTINCT d.name FROM digest d, musicdigest md, music m, albums a, bandalbums ba, band b
 WHERE d.id = md.digest_id AND m.id = md.music_id AND m.album_id = a.id AND ba.albums_id = a.id AND ba.band_id = b.id AND b.name = 'Pentakill';
 
--- Fix select 
-SELECT a.name FROM albums a, genre g, genreband gb, band b, bandalbums ba
-WHERE a.id = ba.albums_id AND b.id = ba.band_id AND b.id = gb.band_id AND g.id = gb.genre_id;
+SELECT a.name AS album_name, count(gb.band_id) AS count_genre FROM albums a, genre g, genreband gb, band b, bandalbums ba
+WHERE a.id = ba.albums_id AND b.id = ba.band_id AND b.id = gb.band_id AND g.id = gb.genre_id
+GROUP BY a.name
+HAVING count(gb.band_id) > 1; 
 
 SELECT m.name AS name_music, count(md.digest_id) FROM music m, musicdigest md
 WHERE m.id = md.music_id
