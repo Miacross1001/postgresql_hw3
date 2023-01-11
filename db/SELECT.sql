@@ -10,8 +10,11 @@ WHERE m.album_id = a.id
 GROUP BY a.name
 ORDER BY a.name;
 
-SELECT b.name FROM band b, albums a, bandalbums bb
-WHERE b.id = bb.band_id AND a.id = bb.albums_id AND (a.issue < '2020-01-01' OR a.issue > '2020-12-31');
+SELECT DISTINCT b.name FROM band b
+WHERE b.name NOT IN (SELECT DISTINCT b.name FROM band b
+					LEFT JOIN bandalbums bb ON b.id=bb.band_id
+					LEFT JOIN albums a ON a.id=bb.albums_id
+					WHERE a.issue >= '2020-01-01' AND a.issue <= '2020-12-31')
 
 SELECT DISTINCT d.name FROM digest d, musicdigest md, music m, albums a, bandalbums ba, band b
 WHERE d.id = md.digest_id AND m.id = md.music_id AND m.album_id = a.id AND ba.albums_id = a.id AND ba.band_id = b.id AND b.name = 'Pentakill';
@@ -36,6 +39,7 @@ WHERE m.album_id = a.id
 GROUP BY a.name;
 
 SELECT min(db.count) AS min_count FROM (SELECT a.name, count(m.album_id) FROM albums a, music m WHERE m.album_id = a.id GROUP BY a.name) AS db;
+
 
 
 
